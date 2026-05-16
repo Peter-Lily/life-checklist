@@ -353,7 +353,8 @@ function render(){
 
 render();
 
-</script>
+<script>
+
 function buildSummary(){
 
   let total = 0;
@@ -368,7 +369,7 @@ function buildSummary(){
 
     state[cat].forEach(i=>{
       total++;
-      if(i.done) {
+      if(i.done){
         done++;
         catDone++;
       }
@@ -409,9 +410,10 @@ function buildSummary(){
     </div>
   `;
 }
-  function exportPoster(){
 
-  buildSummary(); // 先生成海报内容
+function exportPoster(){
+
+  buildSummary();
 
   const el = document.getElementById("poster");
 
@@ -427,6 +429,7 @@ function buildSummary(){
 
   });
 }
+
 </script>
 </body>
 </html>
