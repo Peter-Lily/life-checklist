@@ -3,68 +3,99 @@
 <head>
 <meta charset="utf-8" />
 <title>人生已完成清单</title>
+<style>
+body{
+  margin:0;
+  font-family: -apple-system;
+  background:#0f0f0f;
+  color:white;
+  padding:20px;
+}
+.card{
+  background:#1c1c1c;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:12px;
+}
+.item{
+  padding:8px;
+  margin:5px 0;
+  background:#2a2a2a;
+  border-radius:8px;
+  cursor:pointer;
+}
+.item.done{
+  background:#14532d;
+}
+</style>
 </head>
 
 <body>
-<h1>人生清单系统（云版）</h1>
 
-<button onclick="load()">读取数据</button>
-<button onclick="save()">保存数据</button>
+<h1>人生已完成清单</h1>
+<div id="app"></div>
 
 <script>
 
-const SUPABASE_URL = "https://jlaxrguclvhaauvlrepg.supabase.co";
-const SUPABASE_KEY = "sb_publishable_OcPIFsQ13hoO-q0PDCabFw_A7wPn8kl";
+const data = {
+  "别人给予我的": [
+    "被送礼物","被记得生日","被拥抱","被理解","被支持"
+  ],
+  "我主动完成的": [
+    "送别人礼物","主动道歉","第一次旅行","独自旅行","第一次赚钱"
+  ]
+};
 
-function getUserId(){
-  let id = localStorage.getItem("uid");
-  if(!id){
-    id = crypto.randomUUID();
-    localStorage.setItem("uid", id);
+function load(){
+  let saved = localStorage.getItem("life");
+  if(saved) return JSON.parse(saved);
+
+  let obj = {};
+  for(let k in data){
+    obj[k] = data[k].map(t => ({text:t,done:false}));
   }
-  return id;
+  return obj;
 }
 
-// 保存到云端
-async function save(){
-  const data = {
-    demo: "hello world",
-    time: Date.now()
-  };
+let state = load();
 
-  await fetch(SUPABASE_URL + "/rest/v1/life_data", {
-    method: "POST",
-    headers: {
-      apikey: SUPABASE_KEY,
-      "Content-Type": "application/json",
-      Prefer: "resolution=merge-duplicates"
-    },
-    body: JSON.stringify({
-      user_id: getUserId(),
-      data: data,
-      updated_at: new Date().toISOString()
-    })
-  });
-
-  alert("已保存到云端");
+function save(){
+  localStorage.setItem("life", JSON.stringify(state));
 }
 
-// 从云端读取
-async function load(){
-  const res = await fetch(
-    SUPABASE_URL + "/rest/v1/life_data?user_id=eq." + getUserId(),
-    {
-      headers: {
-        apikey: SUPABASE_KEY
-      }
-    }
-  );
+function render(){
+  let app = document.getElementById("app");
+  app.innerHTML = "";
 
-  const json = await res.json();
-  console.log("读取结果：", json);
-  alert("已读取，请看控制台");
+  for(let cat in state){
+    let div = document.createElement("div");
+    div.className = "card";
+
+    let title = document.createElement("h3");
+    title.innerText = cat;
+    div.appendChild(title);
+
+    state[cat].forEach((item,i)=>{
+      let el = document.createElement("div");
+      el.className = "item" + (item.done ? " done" : "");
+      el.innerText = item.text;
+
+      el.onclick = ()=>{
+        item.done = !item.done;
+        save();
+        render();
+      };
+
+      div.appendChild(el);
+    });
+
+    app.appendChild(div);
+  }
 }
+
+render();
 
 </script>
+
 </body>
 </html>
