@@ -353,13 +353,12 @@ function render(){
 
 <script>
 
+<script>
 render();
 
 function buildSummary(){
-
   let total = 0;
   let done = 0;
-
   let html = "";
 
   for(let cat in state){
@@ -388,16 +387,12 @@ function buildSummary(){
   let global = Math.round((done / total) * 100);
 
   document.getElementById("summary").innerHTML = `
-    <div style="
-      margin-top:30px;
-      padding:20px;
-      border-radius:20px;
+    <div style="margin-top:30px;padding:20px;border-radius:20px;
       background:rgba(255,255,255,0.06);
       border:1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px);
-    ">
-      <h2>人生完成海报</h2>
+      backdrop-filter: blur(10px);">
 
+      <h2>人生完成海报</h2>
       <div style="font-size:40px;font-weight:bold;">
         ${global}%
       </div>
@@ -405,14 +400,12 @@ function buildSummary(){
       <p>${done} / ${total} 已完成</p>
 
       <hr style="border:0;border-top:1px solid #333;margin:15px 0;">
-
       ${html}
     </div>
   `;
 }
 
 function exportPoster(){
-
   buildSummary();
 
   const el = document.getElementById("poster");
@@ -421,15 +414,33 @@ function exportPoster(){
     backgroundColor: "#0f0f0f",
     scale: 2
   }).then(canvas => {
-
     let a = document.createElement("a");
     a.download = "人生海报.png";
     a.href = canvas.toDataURL("image/png");
     a.click();
-
   });
 }
-
 </script>
-</body>
-</html>
+function exportText(){
+  let text = "";
+
+  for(let cat in state){
+    text += `\n【${cat}】\n`;
+
+    state[cat].forEach(i=>{
+      if(i.done){
+        text += `✓ ${i.text}\n`;
+      }
+    });
+  }
+
+  const blob = new Blob([text], {type: "text/plain"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "人生清单报告.txt";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
