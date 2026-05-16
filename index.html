@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>人生已完成清单</title>
+</head>
+
+<body>
+<h1>人生清单系统（云版）</h1>
+
+<button onclick="load()">读取数据</button>
+<button onclick="save()">保存数据</button>
+
+<script>
+
+const SUPABASE_URL = "这里填你的URL";
+const SUPABASE_KEY = "这里填你的KEY";
+
+function getUserId(){
+  let id = localStorage.getItem("uid");
+  if(!id){
+    id = crypto.randomUUID();
+    localStorage.setItem("uid", id);
+  }
+  return id;
+}
+
+// 保存到云端
+async function save(){
+  const data = {
+    demo: "hello world",
+    time: Date.now()
+  };
+
+  await fetch(SUPABASE_URL + "/rest/v1/life_data", {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_KEY,
+      "Content-Type": "application/json",
+      Prefer: "resolution=merge-duplicates"
+    },
+    body: JSON.stringify({
+      user_id: getUserId(),
+      data: data,
+      updated_at: new Date().toISOString()
+    })
+  });
+
+  alert("已保存到云端");
+}
+
+// 从云端读取
+async function load(){
+  const res = await fetch(
+    SUPABASE_URL + "/rest/v1/life_data?user_id=eq." + getUserId(),
+    {
+      headers: {
+        apikey: SUPABASE_KEY
+      }
+    }
+  );
+
+  const json = await res.json();
+  console.log("读取结果：", json);
+  alert("已读取，请看控制台");
+}
+
+</script>
+</body>
+</html>
