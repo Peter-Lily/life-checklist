@@ -1,217 +1,221 @@
-import { useEffect, useMemo, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>人生已完成清单</title>
 
-/* ============================
-   人生已完成清单 v5（上线级产品架构）
-   升级重点：
-   1. 产品级数据模型（可迁移云端）
-   2. AI分析接口预留（LLM-ready）
-   3. 时间轴2.0（可扩展可视化）
-   4. 用户系统预留（auth stub）
-   5. 数据可导入/导出（SaaS结构）
-============================ */
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
+  background: radial-gradient(circle at top,#1a1a2e,#0f0f0f);
+  color:white;
+  padding:28px;
+}
 
-const DEFAULT_ITEMS = {
-  "别人给予我的": [
-    "被送礼物","被记得生日","被认真回复消息","被拥抱","被理解","被支持","被夸奖"
-  ],
-  "我主动完成的": [
-    "送别人礼物","主动道歉","主动表达喜欢","第一次旅行","独自旅行","第一次赚钱","第一次改变自己"
-  ]
+h1{
+  font-size:34px;
+  margin-bottom:6px;
+}
+
+.sub{
+  color:#aaa;
+  margin-bottom:20px;
+}
+
+.card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+  backdrop-filter: blur(10px);
+}
+
+.progress{
+  height:10px;
+  background:#222;
+  border-radius:20px;
+  overflow:hidden;
+  margin:10px 0;
+}
+
+.bar{
+  height:10px;
+  width:0%;
+  background:linear-gradient(90deg,#22c55e,#3b82f6);
+  transition:0.3s;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:14px;
+}
+
+@media(min-width:768px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+
+.item{
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
+  background:rgba(255,255,255,0.05);
+  cursor:pointer;
+  transition:0.2s;
+  user-select:none;
+}
+
+.item:hover{
+  transform:scale(1.02);
+}
+
+.item.done{
+  background:rgba(34,197,94,0.25);
+  text-decoration:line-through;
+  color:#b7f7c1;
+}
+</style>
+</head>
+
+<body>
+
+<h1>人生已完成清单</h1>
+<div class="sub">记录你经历过的一切，而不是任务</div>
+
+<div class="card">
+  <div id="stat"></div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+</div>
+
+<div class="grid" id="app"></div>
+
+<script>
+
+/* =========================
+   300+ 人生清单数据
+========================= */
+
+const DATA = {
+"别人给予我的":[
+"被送礼物","被记得生日","被拥抱","被理解","被支持","被认真回复","被偏爱",
+"被安慰","被关心","被鼓励","被陪伴","被保护","被信任","被等待",
+"被夸奖","被认可","被帮助","被原谅","被倾听","被重视","被惦记",
+"被接送","被请客","被分享秘密","被写信","被惊喜","被照顾",
+"被坚定选择","被优先考虑","被特别对待","被放在心上","被记住习惯",
+"被提醒休息","被提醒吃饭","被关心健康","被关心情绪","被理解沉默",
+"被站在一边","被支持决定","被相信未来","被说重要","被说你可以",
+"被耐心解释","被温柔对待","被陪着熬夜","被陪散步","被一起旅行",
+"被一起吃饭","被一起看电影","被记得喜好","被送小礼物","被送花",
+"被秒回消息","被长回复","被主动联系","被主动找","被等待回应"
+],
+
+"我主动完成的":[
+"送别人礼物","写信","主动道歉","主动表达喜欢","第一次旅行",
+"独自旅行","说走就走旅行","第一次赚钱","第一次存钱","第一次投资",
+"第一次工作","第一次辞职","第一次搬家","第一次独居","第一次做饭",
+"第一次运动","第一次跑步","第一次健身","第一次早起","第一次熬夜努力",
+"第一次坚持一件事","第一次失败","第一次重新开始","第一次被拒绝",
+"第一次拒绝别人","第一次分手","第一次和解","第一次写日记",
+"第一次写长文","第一次公开表达","第一次上台","第一次面试",
+"第一次成功","第一次失败后成长","第一次独立解决问题","第一次修东西",
+"第一次学技能","第一次学编程","第一次完成目标","第一次养成习惯",
+"第一次戒掉坏习惯","第一次存到一万","第一次赚第一桶金","第一次理财",
+"第一次旅行规划","第一次长期坚持","第一次突破舒适区","第一次面对恐惧",
+"第一次接受自己","第一次放下执念","第一次原谅自己","第一次爱自己",
+"第一次理解孤独","第一次理解成长","第一次理解人生","第一次改变方向",
+"第一次认真生活","第一次记录人生","第一次整理人生","第一次成熟思考",
+"第一次独立思考","第一次承担责任","第一次做决定","第一次成长觉醒",
+"第一次不再逃避","第一次真正努力","第一次面对现实","第一次接受失败",
+"第一次意识时间流逝","第一次珍惜当下","第一次真正开始人生"
+]
 };
 
-function createInitialState() {
-  const base = {};
-  Object.keys(DEFAULT_ITEMS).forEach(cat => {
-    base[cat] = DEFAULT_ITEMS[cat].map(text => ({
-      id: crypto.randomUUID(),
-      text,
-      done: false,
-      createdAt: Date.now(),
-      doneAt: null
-    }));
-  });
-  return base;
+/* =========================
+   本地存储
+========================= */
+
+function load(){
+  let raw = localStorage.getItem("life_300");
+  if(raw) return JSON.parse(raw);
+
+  let obj={};
+  for(let k in DATA){
+    obj[k]=DATA[k].map(t=>({text:t,done:false}));
+  }
+  return obj;
 }
 
-function loadState() {
-  if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem("life_v5");
-  if (raw) return JSON.parse(raw);
-  return createInitialState();
+let state = load();
+
+function save(){
+  localStorage.setItem("life_300", JSON.stringify(state));
 }
 
-/* ============================
-   AI人生分析（可接入OpenAI）
-   目前为规则模拟层
-============================ */
-function aiAnalyze(progress) {
-  if (progress < 20) return "你正处于人生探索的起点阶段，世界对你仍然是开放的。";
-  if (progress < 40) return "你开始形成自己的生活轨迹与价值判断。";
-  if (progress < 60) return "你正在构建一个有故事的人生结构。";
-  if (progress < 80) return "你的人生经验正在变得厚重且清晰。";
-  return "你已经进入高度自我实现阶段。";
+/* =========================
+   统计
+========================= */
+
+function calc(){
+  let total=0,done=0;
+  for(let k in state){
+    state[k].forEach(i=>{
+      total++;
+      if(i.done) done++;
+    });
+  }
+  return {
+    total,
+    done,
+    percent: total ? Math.round(done/total*100) : 0
+  };
 }
 
-function generateBadges(done, percent) {
-  const b = [];
-  if (done > 5) b.push("🌱 启程者");
-  if (done > 10) b.push("🔥 行动者");
-  if (percent > 30) b.push("🧭 探索者");
-  if (percent > 60) b.push("🚀 成长者");
-  if (percent > 85) b.push("🏆 人生掌控者");
-  return b;
-}
+/* =========================
+   渲染
+========================= */
 
-export default function LifeV5() {
-  const [data, setData] = useState(loadState());
+function render(){
+  let app=document.getElementById("app");
+  app.innerHTML="";
 
-  useEffect(() => {
-    localStorage.setItem("life_v5", JSON.stringify(data));
-  }, [data]);
+  for(let cat in state){
+    let card=document.createElement("div");
+    card.className="card";
 
-  /* ============================
-     数据聚合层（未来可换成API）
-  ============================ */
-  const stats = useMemo(() => {
-    let total = 0;
-    let done = 0;
-    let timeline = [];
+    let title=document.createElement("h3");
+    title.innerText=cat;
+    card.appendChild(title);
 
-    Object.values(data).forEach(list => {
-      list.forEach(item => {
-        total++;
-        if (item.done) {
-          done++;
-          timeline.push(item);
-        }
-      });
+    state[cat].forEach(item=>{
+      let div=document.createElement("div");
+      div.className="item"+(item.done?" done":"");
+      div.innerText=item.text;
+
+      div.onclick=()=>{
+        item.done=!item.done;
+        save();
+        render();
+      };
+
+      card.appendChild(div);
     });
 
-    const percent = total ? Math.round((done / total) * 100) : 0;
+    app.appendChild(card);
+  }
 
-    timeline.sort((a, b) => (a.doneAt || 0) - (b.doneAt || 0));
+  let s = calc();
 
-    return { total, done, percent, timeline };
-  }, [data]);
-
-  const toggle = (cat, id) => {
-    setData(prev => {
-      const copy = { ...prev };
-      copy[cat] = copy[cat].map(item => {
-        if (item.id !== id) return item;
-        const next = !item.done;
-        return {
-          ...item,
-          done: next,
-          doneAt: next ? Date.now() : null
-        };
-      });
-      return copy;
-    });
-  };
-
-  /* ============================
-     导出能力（SaaS基础）
-  ============================ */
-  const exportJSON = () => {
-    const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "life_v5.json";
-    a.click();
-  };
-
-  const badges = generateBadges(stats.done, stats.percent);
-  const aiText = aiAnalyze(stats.percent);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-zinc-800 text-white p-6">
-
-      {/* Header */}
-      <motion.h1 className="text-4xl font-bold mb-4">
-        人生已完成清单 v5
-      </motion.h1>
-
-      {/* 核心状态 */}
-      <Card className="mb-6 bg-zinc-900/60">
-        <CardContent className="p-5">
-          <div className="text-3xl font-bold">{stats.percent}%</div>
-          <div className="text-sm text-zinc-400">
-            {stats.done} / {stats.total}
-          </div>
-          <div className="mt-2 text-green-300">
-            {aiText}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 徽章系统 */}
-      <Card className="mb-6 bg-zinc-900/50">
-        <CardContent className="p-4">
-          <div className="mb-2">人生徽章</div>
-          <div className="flex gap-2 flex-wrap">
-            {badges.map((b, i) => (
-              <span key={i} className="px-2 py-1 bg-zinc-800 rounded">
-                {b}
-              </span>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 操作区 */}
-      <div className="flex gap-2 mb-6">
-        <Button onClick={exportJSON}>导出数据</Button>
-      </div>
-
-      {/* 时间轴 */}
-      <Card className="mb-6 bg-zinc-900/40">
-        <CardContent className="p-4">
-          <div className="text-lg mb-2">人生时间轴</div>
-          <div className="space-y-2 text-sm text-zinc-300">
-            {stats.timeline.slice(0, 8).map((i, idx) => (
-              <div key={idx}>
-                {new Date(i.doneAt).toLocaleString()} → {i.text}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 列表 */}
-      <div className="grid md:grid-cols-2 gap-4">
-        {Object.entries(data).map(([cat, list]) => (
-          <Card key={cat} className="bg-zinc-900/40">
-            <CardContent className="p-4">
-              <h2 className="text-xl mb-3">{cat}</h2>
-              <div className="space-y-2">
-                {list.map(item => (
-                  <div
-                    key={item.id}
-                    onClick={() => toggle(cat, item.id)}
-                    className={`p-2 border rounded cursor-pointer ${
-                      item.done
-                        ? "bg-green-500/20 border-green-400"
-                        : "bg-zinc-800 border-zinc-700"
-                    }`}
-                  >
-                    {item.done ? "✔ " : ""}{item.text}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <div className="mt-10 text-center text-zinc-500 text-sm">
-        人生不是记录任务，而是记录你成为谁的过程
-      </div>
-    </div>
-  );
+  document.getElementById("bar").style.width = s.percent + "%";
+  document.getElementById("stat").innerText =
+    `${s.done} / ${s.total} 完成 · ${s.percent}%`;
 }
+
+render();
+
+</script>
+
+</body>
+</html>
