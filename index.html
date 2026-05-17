@@ -363,9 +363,17 @@ function render(){
 
   let s=calc();
 
-  document.getElementById("bar").style.width=s.percent+"%";
-  document.getElementById("stat").innerText=
-    `${s.done}/${s.total} 完成 · ${s.percent}%`;
+document.getElementById("percentText").innerText =
+  s.percent + "%";
+
+document.getElementById("doneText").innerText =
+  s.done;
+
+document.getElementById("levelText").innerText =
+  getLevel(s.percent);
+
+document.getElementById("fieldText").innerText =
+  Object.keys(state).length;
 }
 
 render();
