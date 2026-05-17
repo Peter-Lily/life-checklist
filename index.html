@@ -3,150 +3,189 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>人生星图 · Cosmos</title>
+<title>Life Tracker Pro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
+
+/* ================= APPLE STYLE BASE ================= */
+
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
-  background: radial-gradient(circle at top,#050816,#000);
-  color:white;
-  padding:16px;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI";
+  background: radial-gradient(circle at top,#0b1220,#05070f);
+  color:#fff;
 }
 
-/* ===== 顶部 ===== */
-.hero{
-  text-align:center;
-  padding:20px 10px;
-}
-
-.big{
-  font-size:70px;
-  font-weight:800;
-  background: linear-gradient(90deg,#00f5ff,#7c4dff);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.tag{
-  color:#aaa;
-  margin-top:6px;
-}
-
-/* ===== 仪表盘 ===== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  margin:16px 0;
-}
-
-.box{
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:14px;
-  text-align:center;
-  padding:10px;
-}
-
-.box h3{margin:0}
-
-/* ===== 星图卡片 ===== */
-.constellation{
-  margin:12px 0;
-  padding:14px;
-  border-radius:18px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08);
-  position:relative;
-  overflow:hidden;
-}
-
-.constellation::before{
-  content:"";
-  position:absolute;
-  top:-40%;
-  left:-40%;
-  width:180%;
-  height:180%;
-  background: radial-gradient(circle,rgba(124,77,255,0.15),transparent 60%);
-  transform:rotate(25deg);
+/* HEADER */
+.header{
+  padding:24px;
+  position:sticky;
+  top:0;
+  backdrop-filter: blur(20px);
+  background: rgba(10,15,25,0.6);
+  border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
 .title{
-  font-weight:600;
-  color:#7dd3fc;
-  margin-bottom:6px;
+  font-size:26px;
+  font-weight:700;
 }
 
-/* item */
-.item{
-  font-size:14px;
-  padding:6px;
-  margin:4px 0;
-  border-radius:8px;
-  background:rgba(255,255,255,0.03);
+.sub{
+  color:#8b9bb3;
+  font-size:13px;
+  margin-top:4px;
+}
+
+/* DASHBOARD */
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  padding:16px 24px;
+}
+
+.card{
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:14px;
+  backdrop-filter: blur(12px);
+}
+
+.card h3{
+  margin:0;
+  font-size:13px;
+  color:#9aa4b2;
+}
+
+.card .num{
+  font-size:22px;
+  font-weight:700;
+  margin-top:6px;
+}
+
+/* PROGRESS BAR */
+.progress{
+  height:8px;
+  margin:0 24px;
+  background:#1a2233;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#34d399,#60a5fa);
+  transition:0.4s;
+}
+
+/* LIST */
+.container{
+  padding:24px;
+}
+
+.group{
+  margin-bottom:16px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.03);
+}
+
+.group-title{
+  padding:14px 16px;
   cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:600;
+}
+
+.items{
+  display:none;
+  padding:0 16px 14px;
+}
+
+.item{
+  padding:10px;
+  margin:6px 0;
+  border-radius:12px;
+  background:rgba(255,255,255,0.04);
+  cursor:pointer;
+  transition:0.2s;
+  font-size:14px;
+}
+
+.item:hover{
+  transform:scale(1.02);
 }
 
 .item.done{
-  color:#a7f3d0;
-  background:rgba(34,197,94,0.2);
+  background:rgba(52,211,153,0.15);
+  color:#86efac;
   text-decoration:line-through;
 }
 
-/* 星星效果 */
-.glow{
-  box-shadow:0 0 10px rgba(0,245,255,0.4);
-}
-
-/* 按钮 */
-.btns{
+/* BUTTONS */
+.actions{
+  position:fixed;
+  bottom:18px;
+  right:18px;
   display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin:10px 0;
+  flex-direction:column;
+  gap:10px;
 }
 
 button{
-  background:linear-gradient(90deg,#00f5ff,#7c4dff);
   border:none;
   padding:10px 12px;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
-  font-weight:600;
+  background:#2563eb;
   color:white;
+  font-size:13px;
+  backdrop-filter: blur(10px);
 }
+
+button:hover{
+  background:#1d4ed8;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="hero">
-  <div class="big" id="percent">0%</div>
-  <div class="tag" id="status">人生加载中...</div>
+<div class="header">
+  <div class="title">Life Tracker Pro</div>
+  <div class="sub">记录你已经经历的人生，而不是任务</div>
 </div>
 
-<div class="grid">
-  <div class="box"><h3 id="done">0</h3><div>已解锁</div></div>
-  <div class="box"><h3 id="total">0</h3><div>总经历</div></div>
-  <div class="box"><h3 id="level">Lv.1</h3><div>人生等级</div></div>
-  <div class="box"><h3 id="best">-</h3><div>最亮星云</div></div>
+<div class="dashboard">
+  <div class="card"><h3>完成率</h3><div class="num" id="rate">0%</div></div>
+  <div class="card"><h3>已完成</h3><div class="num" id="done">0</div></div>
+  <div class="card"><h3>总项目</h3><div class="num" id="total">0</div></div>
+  <div class="card"><h3>领域</h3><div class="num" id="cats">0</div></div>
 </div>
 
-<div class="btns">
-  <button onclick="exportPNG()">导出星图海报</button>
-  <button onclick="copyShare()">复制分享</button>
-</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
 
-<div id="poster"></div>
+<div class="container" id="app"></div>
+
+<div class="actions">
+  <button onclick="exportText()">导出报告</button>
+  <button onclick="exportJSON()">导出数据</button>
+  <button onclick="exportImage()">生成海报</button>
+</div>
 
 <script>
 
-/* ===== 数据 ===== */
+/* ================= DATA ================= */
+
 const DATA = {
 "成长与童年": [
   "出生", "学会走路", "学会说话", "第一次叫爸爸妈妈", "第一次上幼儿园",
@@ -286,150 +325,142 @@ const DATA = {
 ]
 };
 
-/* ===== 状态 ===== */
-function load(){
-  let raw = localStorage.getItem("life_cosmos_v2");
-  if(raw) return JSON.parse(raw);
+/* ================= STATE ================= */
 
-  let obj={};
+const KEY = "life_tracker_pro";
+
+let state = JSON.parse(localStorage.getItem(KEY)) || init();
+
+function init(){
+  let obj = {};
   for(let k in DATA){
-    obj[k]=DATA[k].map(i=>({text:i,done:false}));
+    obj[k] = DATA[k].map(t=>({text:t,done:false}));
   }
   return obj;
 }
 
-let state = load();
-
 function save(){
-  localStorage.setItem("life_cosmos_v2",JSON.stringify(state));
+  localStorage.setItem(KEY, JSON.stringify(state));
 }
 
-/* ===== 统计 ===== */
+/* ================= CALC ================= */
+
 function calc(){
   let total=0,done=0;
-  let best="-";
-  let bestScore=0;
-
   for(let k in state){
-    let c=0;
-
     state[k].forEach(i=>{
       total++;
-      if(i.done){
-        done++;
-        c++;
-      }
+      if(i.done) done++;
     });
-
-    if(c>bestScore){
-      bestScore=c;
-      best=k;
-    }
   }
-
   return {
     total,
     done,
-    percent:Math.round(done/total*100),
-    best
+    rate: total?Math.round(done/total*100):0
   };
 }
 
-/* ===== 状态词 ===== */
-function status(p){
-  if(p<20) return "人生探索期 · 星云正在形成";
-  if(p<40) return "成长期 · 星光开始出现";
-  if(p<60) return "稳定期 · 星系逐渐成型";
-  if(p<80) return "加速期 · 光芒增强";
-  return "觉醒期 · 人生已点亮";
-}
+/* ================= RENDER ================= */
 
-/* ===== 等级 ===== */
-function level(p){
-  if(p<20) return "Lv.1";
-  if(p<40) return "Lv.2";
-  if(p<60) return "Lv.3";
-  if(p<80) return "Lv.4";
-  return "Lv.5";
-}
-
-/* ===== 渲染星图 ===== */
 function render(){
-  const box=document.getElementById("poster");
-  box.innerHTML="";
+  const app = document.getElementById("app");
+  app.innerHTML = "";
 
   for(let cat in state){
 
-    let doneCount=0;
-    state[cat].forEach(i=>{ if(i.done) doneCount++; });
+    const group = document.createElement("div");
+    group.className = "group";
 
-    let percent=Math.round(doneCount/state[cat].length*100);
+    const title = document.createElement("div");
+    title.className = "group-title";
+    title.innerHTML = `${cat} <span>›</span>`;
 
-    let div=document.createElement("div");
-    div.className="constellation"+(percent>50?" glow":"");
+    const items = document.createElement("div");
+    items.className = "items";
 
-    div.innerHTML=`
-      <div class="title">${cat} · ${percent}%</div>
-    `;
+    title.onclick = ()=>{
+      items.style.display = items.style.display==="block"?"none":"block";
+    };
 
-    state[cat].forEach(i=>{
-      let item=document.createElement("div");
-      item.className="item"+(i.done?" done":"");
-      item.innerText=i.text;
+    state[cat].forEach(item=>{
+      const el = document.createElement("div");
+      el.className = "item" + (item.done?" done":"");
+      el.innerText = item.text;
 
-      item.onclick=()=>{
-        i.done=!i.done;
+      el.onclick = ()=>{
+        item.done = !item.done;
         save();
         render();
       };
 
-      div.appendChild(item);
+      items.appendChild(el);
     });
 
-    box.appendChild(div);
+    group.appendChild(title);
+    group.appendChild(items);
+    app.appendChild(group);
   }
 
-  const s=calc();
-
-  document.getElementById("percent").innerText=s.percent+"%";
-  document.getElementById("done").innerText=s.done;
-  document.getElementById("total").innerText=s.total;
-  document.getElementById("level").innerText=level(s.percent);
-  document.getElementById("best").innerText=s.best;
-  document.getElementById("status").innerText=status(s.percent);
+  updateUI();
 }
 
-/* ===== 导出PNG ===== */
-function exportPNG(){
-  html2canvas(document.getElementById("poster"),{
-    backgroundColor:"#000",
-    scale:2
-  }).then(canvas=>{
-    let a=document.createElement("a");
-    a.download="人生星图.png";
-    a.href=canvas.toDataURL();
+/* ================= UI ================= */
+
+function updateUI(){
+  const c = calc();
+
+  document.getElementById("rate").innerText = c.rate + "%";
+  document.getElementById("done").innerText = c.done;
+  document.getElementById("total").innerText = c.total;
+  document.getElementById("cats").innerText = Object.keys(state).length;
+
+  document.getElementById("bar").style.width = c.rate + "%";
+}
+
+/* ================= EXPORT ================= */
+
+function exportText(){
+  let text = "Life Report\n\n";
+
+  for(let k in state){
+    text += `【${k}】\n`;
+    state[k].forEach(i=>{
+      if(i.done) text += "✓ " + i.text + "\n";
+    });
+    text += "\n";
+  }
+
+  download(text,"life_report.txt","text/plain");
+}
+
+function exportJSON(){
+  download(JSON.stringify(state,null,2),"life_data.json","application/json");
+}
+
+function exportImage(){
+  html2canvas(document.body).then(canvas=>{
+    const a = document.createElement("a");
+    a.download = "life_poster.png";
+    a.href = canvas.toDataURL();
     a.click();
   });
 }
 
-/* ===== 分享文本 ===== */
-function copyShare(){
-  const s=calc();
-
-  const text=
-`我现在的人生状态：
-${status(s.percent)}
-
-完成度：${s.percent}%
-等级：${level(s.percent)}
-最亮星云：${s.best}`;
-
-  navigator.clipboard.writeText(text);
-  alert("已复制分享内容");
+function download(content,name,type){
+  const blob = new Blob([content],{type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(url);
 }
+
+/* ================= INIT ================= */
 
 render();
 
 </script>
+
 </body>
 </html>
