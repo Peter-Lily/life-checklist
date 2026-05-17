@@ -3,189 +3,161 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Life Tracker Pro</title>
+<title>人生清单</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-
-/* ================= APPLE STYLE BASE ================= */
+:root{
+  --bg:#0b0f1a;
+  --card:rgba(255,255,255,0.06);
+  --stroke:rgba(255,255,255,0.12);
+  --text:#e8ecf5;
+  --sub:#9aa4b2;
+  --green:#34d399;
+  --blue:#60a5fa;
+}
 
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI";
-  background: radial-gradient(circle at top,#0b1220,#05070f);
-  color:#fff;
-}
-
-/* HEADER */
-.header{
+  background: radial-gradient(circle at top,#111827,#05070d);
+  color:var(--text);
   padding:24px;
-  position:sticky;
-  top:0;
-  backdrop-filter: blur(20px);
-  background: rgba(10,15,25,0.6);
-  border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-.title{
-  font-size:26px;
-  font-weight:700;
-}
-
-.sub{
-  color:#8b9bb3;
-  font-size:13px;
-  margin-top:4px;
-}
-
-/* DASHBOARD */
-.dashboard{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-  padding:16px 24px;
-}
-
-.card{
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;
-  padding:14px;
-  backdrop-filter: blur(12px);
-}
-
-.card h3{
+h1{
+  font-size:34px;
   margin:0;
-  font-size:13px;
-  color:#9aa4b2;
+  letter-spacing:-0.02em;
 }
 
-.card .num{
-  font-size:22px;
-  font-weight:700;
-  margin-top:6px;
-}
+.sub{color:var(--sub); margin-top:6px;}
 
-/* PROGRESS BAR */
-.progress{
-  height:8px;
-  margin:0 24px;
-  background:#1a2233;
-  border-radius:20px;
-  overflow:hidden;
-}
-
-.bar{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#34d399,#60a5fa);
-  transition:0.4s;
-}
-
-/* LIST */
-.container{
-  padding:24px;
-}
-
-.group{
-  margin-bottom:16px;
-  border-radius:18px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.03);
-}
-
-.group-title{
-  padding:14px 16px;
-  cursor:pointer;
+.topbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+button{
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  border:none;
+  padding:10px 14px;
+  border-radius:12px;
+  color:white;
+  cursor:pointer;
   font-weight:600;
 }
 
-.items{
-  display:none;
-  padding:0 16px 14px;
+button:hover{transform:scale(1.03);}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.dash-card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:16px;
+  padding:14px;
+  backdrop-filter: blur(14px);
+}
+
+.label{font-size:12px;color:var(--sub);}
+.value{font-size:22px;font-weight:700;margin-top:6px;}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--stroke);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:16px;
+  backdrop-filter: blur(14px);
+}
+
+.cat-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:10px;
 }
 
 .item{
-  padding:10px;
+  padding:10px 12px;
   margin:6px 0;
   border-radius:12px;
   background:rgba(255,255,255,0.04);
   cursor:pointer;
-  transition:0.2s;
-  font-size:14px;
+  transition:.2s;
 }
 
-.item:hover{
-  transform:scale(1.02);
-}
+.item:hover{transform:scale(1.02);}
 
 .item.done{
   background:rgba(52,211,153,0.15);
-  color:#86efac;
+  color:#a7f3d0;
   text-decoration:line-through;
 }
 
-/* BUTTONS */
-.actions{
-  position:fixed;
-  bottom:18px;
-  right:18px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+.progress{
+  height:8px;
+  background:#1f2937;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:10px;
 }
 
-button{
-  border:none;
-  padding:10px 12px;
-  border-radius:12px;
-  cursor:pointer;
-  background:#2563eb;
-  color:white;
-  font-size:13px;
-  backdrop-filter: blur(10px);
+.bar{
+  height:8px;
+  width:0%;
+  background:linear-gradient(90deg,var(--green),var(--blue));
 }
 
-button:hover{
-  background:#1d4ed8;
+.shareBox{
+  margin-top:20px;
+  padding:16px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--stroke);
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <div class="title">Life Tracker Pro</div>
-  <div class="sub">记录你已经经历的人生，而不是任务</div>
+<div class="topbar">
+  <div>
+    <h1>人生已完成清单</h1>
+    <div class="sub">不是任务，是你已经活过的证明</div>
+  </div>
+
+  <div>
+    <button onclick="exportShare()">分享卡片</button>
+    <button onclick="exportText()">导出文本</button>
+  </div>
 </div>
 
+<!-- 仪表盘 -->
 <div class="dashboard">
-  <div class="card"><h3>完成率</h3><div class="num" id="rate">0%</div></div>
-  <div class="card"><h3>已完成</h3><div class="num" id="done">0</div></div>
-  <div class="card"><h3>总项目</h3><div class="num" id="total">0</div></div>
-  <div class="card"><h3>领域</h3><div class="num" id="cats">0</div></div>
+  <div class="dash-card"><div class="label">完成率</div><div class="value" id="p">0%</div></div>
+  <div class="dash-card"><div class="label">已点亮</div><div class="value" id="d">0</div></div>
+  <div class="dash-card"><div class="label">人生等级</div><div class="value" id="lv">Lv.1</div></div>
+  <div class="dash-card"><div class="label">领域</div><div class="value" id="c">0</div></div>
 </div>
 
 <div class="progress"><div class="bar" id="bar"></div></div>
 
-<div class="container" id="app"></div>
+<div id="app"></div>
 
-<div class="actions">
-  <button onclick="exportText()">导出报告</button>
-  <button onclick="exportJSON()">导出数据</button>
-  <button onclick="exportImage()">生成海报</button>
-</div>
+<div id="shareCard" class="shareBox"></div>
 
 <script>
-
-/* ================= DATA ================= */
-
 const DATA = {
 "成长与童年": [
   "出生", "学会走路", "学会说话", "第一次叫爸爸妈妈", "第一次上幼儿园",
@@ -325,141 +297,133 @@ const DATA = {
 ]
 };
 
-/* ================= STATE ================= */
+let state = load();
 
-const KEY = "life_tracker_pro";
+function load(){
+  let s = localStorage.getItem("life_v2");
+  if(s) return JSON.parse(s);
 
-let state = JSON.parse(localStorage.getItem(KEY)) || init();
-
-function init(){
   let obj = {};
   for(let k in DATA){
-    obj[k] = DATA[k].map(t=>({text:t,done:false}));
+    obj[k] = DATA[k].map(x=>({text:x,done:false}));
   }
   return obj;
 }
 
 function save(){
-  localStorage.setItem(KEY, JSON.stringify(state));
+  localStorage.setItem("life_v2",JSON.stringify(state));
 }
-
-/* ================= CALC ================= */
 
 function calc(){
-  let total=0,done=0;
+  let t=0,d=0;
   for(let k in state){
     state[k].forEach(i=>{
-      total++;
-      if(i.done) done++;
+      t++;
+      if(i.done) d++;
     });
   }
-  return {
-    total,
-    done,
-    rate: total?Math.round(done/total*100):0
-  };
+  return {t,d,p:Math.round(d/t*100)};
 }
 
-/* ================= RENDER ================= */
+function level(p){
+  if(p<20) return "Lv.1";
+  if(p<40) return "Lv.2";
+  if(p<60) return "Lv.3";
+  if(p<80) return "Lv.4";
+  return "Lv.5";
+}
 
 function render(){
   const app = document.getElementById("app");
-  app.innerHTML = "";
+  app.innerHTML="";
 
   for(let cat in state){
+    const card=document.createElement("div");
+    card.className="card";
 
-    const group = document.createElement("div");
-    group.className = "group";
+    const title=document.createElement("div");
+    title.className="cat-title";
+    title.textContent=cat;
+    card.appendChild(title);
 
-    const title = document.createElement("div");
-    title.className = "group-title";
-    title.innerHTML = `${cat} <span>›</span>`;
+    state[cat].forEach(i=>{
+      const div=document.createElement("div");
+      div.className="item"+(i.done?" done":"");
+      div.textContent=i.text;
 
-    const items = document.createElement("div");
-    items.className = "items";
-
-    title.onclick = ()=>{
-      items.style.display = items.style.display==="block"?"none":"block";
-    };
-
-    state[cat].forEach(item=>{
-      const el = document.createElement("div");
-      el.className = "item" + (item.done?" done":"");
-      el.innerText = item.text;
-
-      el.onclick = ()=>{
-        item.done = !item.done;
+      div.onclick=()=>{
+        i.done=!i.done;
         save();
         render();
       };
 
-      items.appendChild(el);
+      card.appendChild(div);
     });
 
-    group.appendChild(title);
-    group.appendChild(items);
-    app.appendChild(group);
+    app.appendChild(card);
   }
 
-  updateUI();
+  const s=calc();
+  document.getElementById("p").textContent=s.p+"%";
+  document.getElementById("d").textContent=s.d;
+  document.getElementById("lv").textContent=level(s.p);
+  document.getElementById("c").textContent=Object.keys(state).length;
+
+  document.getElementById("bar").style.width=s.p+"%";
+
+  renderShare();
 }
 
-/* ================= UI ================= */
+function renderShare(){
+  const s=calc();
+  let html=`<h3>你的完成人生</h3>
+  <p><b>${s.p}%</b> 已点亮</p>`;
 
-function updateUI(){
-  const c = calc();
-
-  document.getElementById("rate").innerText = c.rate + "%";
-  document.getElementById("done").innerText = c.done;
-  document.getElementById("total").innerText = c.total;
-  document.getElementById("cats").innerText = Object.keys(state).length;
-
-  document.getElementById("bar").style.width = c.rate + "%";
-}
-
-/* ================= EXPORT ================= */
-
-function exportText(){
-  let text = "Life Report\n\n";
-
-  for(let k in state){
-    text += `【${k}】\n`;
-    state[k].forEach(i=>{
-      if(i.done) text += "✓ " + i.text + "\n";
-    });
-    text += "\n";
+  for(let cat in state){
+    let done = state[cat].filter(i=>i.done).length;
+    html+=`<div>${cat}: ${done}/${state[cat].length}</div>`;
   }
 
-  download(text,"life_report.txt","text/plain");
+  document.getElementById("shareCard").innerHTML=html;
 }
 
-function exportJSON(){
-  download(JSON.stringify(state,null,2),"life_data.json","application/json");
-}
+/* 分享（不卡长图） */
+function exportShare(){
+  const el = document.getElementById("shareCard");
 
-function exportImage(){
-  html2canvas(document.body).then(canvas=>{
-    const a = document.createElement("a");
-    a.download = "life_poster.png";
-    a.href = canvas.toDataURL();
+  html2canvas(el,{
+    backgroundColor:"#0b0f1a",
+    scale:2
+  }).then(canvas=>{
+    const a=document.createElement("a");
+    a.download="人生分享卡.png";
+    a.href=canvas.toDataURL();
     a.click();
   });
 }
 
-function download(content,name,type){
-  const blob = new Blob([content],{type});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = name;
+/* 文本分享（更重要） */
+function exportText(){
+  let txt="";
+  for(let cat in state){
+    txt+="\n["+cat+"]\n";
+    state[cat].forEach(i=>{
+      if(i.done) txt+="✓ "+i.text+"\n";
+    });
+  }
+
+  const blob=new Blob([txt],{type:"text/plain"});
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="人生清单.txt";
   a.click();
+
   URL.revokeObjectURL(url);
 }
 
-/* ================= INIT ================= */
-
 render();
-
 </script>
 
 </body>
