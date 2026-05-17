@@ -3,16 +3,28 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>人生清单 V4</title>
+<title>人生清单</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
+:root{
+  --bg1:#070A13;
+  --bg2:#0B1220;
+  --card:rgba(255,255,255,0.06);
+  --stroke:rgba(255,255,255,0.08);
+  --text:#E5E7EB;
+  --muted:#94A3B8;
+  --g1:#22c55e;
+  --g2:#3b82f6;
+  --g3:#a855f7;
+}
+
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
-  background:#0a0f1c;
-  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC";
+  background: radial-gradient(circle at top, #111827, #050814);
+  color:var(--text);
   padding:20px;
 }
 
@@ -22,32 +34,29 @@ body{
   justify-content:space-between;
   align-items:center;
   padding:22px;
-  border-radius:24px;
-  background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(16,185,129,0.12));
-  border:1px solid rgba(255,255,255,0.08);
-  margin-bottom:16px;
+  border-radius:26px;
+  background: linear-gradient(135deg, rgba(59,130,246,.18), rgba(168,85,247,.12));
+  border:1px solid var(--stroke);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4);
 }
 
-.hero h1{
-  font-size:26px;
-  margin:0;
-}
-
-.hero p{
-  margin:6px 0 0;
-  color:#94a3b8;
-}
+.hero h1{margin:0;font-size:28px;letter-spacing:1px;}
+.hero p{margin:6px 0 0;color:var(--muted)}
 
 /* ===== RING ===== */
 .ring{
-  width:90px;
-  height:90px;
+  width:96px;
+  height:96px;
   border-radius:50%;
-  background:conic-gradient(#22c55e var(--p), #1f2937 0);
+  background:conic-gradient(var(--g1) var(--p), #1f2937 0);
   display:flex;
   align-items:center;
   justify-content:center;
   font-weight:700;
+  font-size:18px;
+  transition:all .5s ease;
+  box-shadow:0 0 30px rgba(34,197,94,.25);
 }
 
 /* ===== GRID ===== */
@@ -55,33 +64,61 @@ body{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:12px;
-  margin-bottom:16px;
+  margin:16px 0;
 }
 
 .card{
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.06);
+  background:var(--card);
+  border:1px solid var(--stroke);
   border-radius:18px;
   padding:14px;
+  backdrop-filter: blur(10px);
+  transition:.3s;
 }
+.card:hover{transform:translateY(-2px);}
+.label{font-size:12px;color:var(--muted)}
+.value{font-size:20px;font-weight:700;margin-top:6px}
 
-.label{font-size:12px;color:#94a3b8;}
-.value{font-size:18px;font-weight:700;margin-top:6px;}
+/* ===== BUTTONS ===== */
+.btns{
+  display:flex;
+  gap:10px;
+  margin:16px 0;
+}
+button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  font-weight:600;
+  cursor:pointer;
+  color:white;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow:0 10px 30px rgba(59,130,246,.25);
+  transition:.3s;
+}
+button:hover{transform:scale(1.03);}
 
 /* ===== CATEGORY ===== */
 .cat{
   margin-bottom:14px;
   padding:14px;
   border-radius:18px;
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.06);
+  background:var(--card);
+  border:1px solid var(--stroke);
+  backdrop-filter: blur(10px);
+  animation: fadeIn .4s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
 .cat-title{
   display:flex;
   justify-content:space-between;
   font-weight:600;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 
 .item{
@@ -90,46 +127,69 @@ body{
   border-radius:12px;
   background:rgba(255,255,255,0.03);
   cursor:pointer;
-  transition:.2s;
+  transition:.25s;
 }
-
 .item:hover{transform:scale(1.02);}
-
 .item.done{
-  background:rgba(34,197,94,0.15);
+  background:rgba(34,197,94,.15);
   color:#86efac;
   text-decoration:line-through;
 }
 
-/* ===== BAR ===== */
 .bar{
-  height:6px;
+  height:7px;
   background:#111827;
   border-radius:20px;
   overflow:hidden;
-  margin-top:8px;
+  margin-top:10px;
 }
 .bar > div{
   height:100%;
-  background:linear-gradient(90deg,#22c55e,#3b82f6);
+  background: linear-gradient(90deg,var(--g1),var(--g2));
 }
 
-/* ===== BUTTONS ===== */
-.btns{
-  display:flex;
-  gap:10px;
-  margin:16px 0;
-}
-
-button{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,#3b82f6,#2563eb);
+/* ===== SHARE CARD ===== */
+#shareCard{
+  position:fixed;
+  left:-9999px;
+  top:0;
+  width:900px;
+  padding:40px;
+  background: radial-gradient(circle at top,#111827,#050814);
   color:white;
-  font-weight:600;
-  cursor:pointer;
+  border-radius:30px;
+}
+
+.share-title{
+  font-size:34px;
+  font-weight:800;
+}
+.share-sub{
+  color:#94a3b8;
+  margin-top:6px;
+}
+
+.share-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:20px;
+}
+
+.share-box{
+  background:rgba(255,255,255,.05);
+  padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.big{
+  font-size:40px;
+  font-weight:800;
+  margin-top:10px;
+  background: linear-gradient(90deg,#22c55e,#3b82f6);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
 }
 </style>
 </head>
@@ -139,38 +199,50 @@ button{
 <div class="hero">
   <div>
     <h1>人生清单</h1>
-    <p>你已经活过的证明</p>
+    <p>把经历变成可视化的生命轨迹</p>
   </div>
-
   <div class="ring" id="ring">0%</div>
 </div>
 
 <div class="grid">
-  <div class="card">
-    <div class="label">已完成</div>
-    <div class="value" id="done">0</div>
-  </div>
-
-  <div class="card">
-    <div class="label">等级</div>
-    <div class="value" id="lv">Lv.1</div>
-  </div>
-
-  <div class="card">
-    <div class="label">领域</div>
-    <div class="value" id="cat">0</div>
-  </div>
+  <div class="card"><div class="label">已完成</div><div class="value" id="done">0</div></div>
+  <div class="card"><div class="label">等级</div><div class="value" id="lv">Lv.1</div></div>
+  <div class="card"><div class="label">领域</div><div class="value" id="cat">0</div></div>
 </div>
 
 <div class="btns">
-  <button onclick="copyShare()">复制分享</button>
-  <button onclick="exportText()">导出</button>
+  <button onclick="shareImage()">生成海报</button>
+  <button onclick="exportText()">导出记录</button>
 </div>
 
 <div id="app"></div>
 
-<script>
+<!-- SHARE POSTER -->
+<div id="shareCard">
+  <div class="share-title">人生完成度报告</div>
+  <div class="share-sub" id="shareSub">Your life story snapshot</div>
 
+  <div class="share-grid">
+    <div class="share-box">
+      完成度
+      <div class="big" id="s1">0%</div>
+    </div>
+    <div class="share-box">
+      已完成
+      <div class="big" id="s2">0</div>
+    </div>
+    <div class="share-box">
+      未完成
+      <div class="big" id="s3">0</div>
+    </div>
+    <div class="share-box">
+      领域数
+      <div class="big" id="s4">0</div>
+    </div>
+  </div>
+</div>
+
+<script>
 const DATA = {
 "成长与童年": [
   "出生", "学会走路", "学会说话", "第一次叫爸爸妈妈", "第一次上幼儿园",
@@ -313,9 +385,8 @@ const DATA = {
 let state = load();
 
 function load(){
-  let s = localStorage.getItem("life_v4");
+  let s = localStorage.getItem("life_v5");
   if(s) return JSON.parse(s);
-
   let obj={};
   for(let k in DATA){
     obj[k]=DATA[k].map(x=>({text:x,done:false}));
@@ -323,24 +394,17 @@ function load(){
   return obj;
 }
 
-function save(){
-  localStorage.setItem("life_v4",JSON.stringify(state));
-}
+function save(){localStorage.setItem("life_v5",JSON.stringify(state));}
 
 function calc(){
   let t=0,d=0;
   for(let k in state){
-    state[k].forEach(i=>{
-      t++;
-      if(i.done) d++;
-    });
+    state[k].forEach(i=>{t++; if(i.done)d++;});
   }
   return {t,d,p:Math.round(d/t*100)};
 }
 
-function level(p){
-  return p<20?"Lv.1":p<40?"Lv.2":p<60?"Lv.3":p<80?"Lv.4":"Lv.5";
-}
+function level(p){return p<20?"Lv.1":p<40?"Lv.2":p<60?"Lv.3":p<80?"Lv.4":"Lv.5";}
 
 function render(){
   const app=document.getElementById("app");
@@ -348,81 +412,74 @@ function render(){
 
   const s=calc();
 
-  document.getElementById("ring").style.setProperty("--p", s.p+"%");
+  document.getElementById("ring").style.setProperty("--p",s.p+"%");
   document.getElementById("ring").innerText=s.p+"%";
   document.getElementById("done").innerText=s.d;
   document.getElementById("lv").innerText=level(s.p);
   document.getElementById("cat").innerText=Object.keys(state).length;
 
   for(let cat in state){
-    let done = state[cat].filter(i=>i.done).length;
-    let total = state[cat].length;
-    let p = Math.round(done/total*100);
+    let done=state[cat].filter(i=>i.done).length;
+    let total=state[cat].length;
+    let p=Math.round(done/total*100);
 
     let div=document.createElement("div");
     div.className="cat";
 
     div.innerHTML=`
-      <div class="cat-title">
-        <span>${cat}</span>
-        <span>${p}%</span>
-      </div>
-
+      <div class='cat-title'><span>${cat}</span><span>${p}%</span></div>
       ${state[cat].map(i=>`
-        <div class="item ${i.done?'done':''}" onclick="toggle('${cat}','${i.text}')">
+        <div class='item ${i.done?'done':''}' onclick="toggle('${cat}','${i.text}')">
           ${i.text}
         </div>
       `).join('')}
-
-      <div class="bar"><div style="width:${p}%"></div></div>
+      <div class='bar'><div style='width:${p}%' ></div></div>
     `;
 
     app.appendChild(div);
   }
 }
 
-function toggle(cat,text){
-  let item = state[cat].find(i=>i.text===text);
-  item.done=!item.done;
-  save();
-  render();
+function toggle(c,t){
+  let i=state[c].find(x=>x.text===t);
+  i.done=!i.done;
+  save();render();
 }
 
-function copyShare(){
+function shareImage(){
   const s=calc();
-  let txt=`人生完成度 ${s.p}%\n\n`;
 
-  for(let c in state){
-    let d=state[c].filter(i=>i.done).length;
-    txt+=`${c}: ${d}/${state[c].length}\n`;
-  }
+  document.getElementById("s1").innerText=s.p+"%";
+  document.getElementById("s2").innerText=s.d;
+  document.getElementById("s3").innerText=s.t-s.d;
+  document.getElementById("s4").innerText=Object.keys(state).length;
 
-  navigator.clipboard.writeText(txt);
-  alert("已复制");
+  html2canvas(document.getElementById("shareCard"),{
+    backgroundColor:null,
+    scale:2
+  }).then(canvas=>{
+    let a=document.createElement("a");
+    a.download="人生清单海报.png";
+    a.href=canvas.toDataURL("image/png");
+    a.click();
+  });
 }
 
 function exportText(){
   let txt="";
   for(let c in state){
     txt+="\n["+c+"]\n";
-    state[c].forEach(i=>{
-      if(i.done) txt+="✓ "+i.text+"\n";
-    });
+    state[c].forEach(i=>{if(i.done)txt+="✓ "+i.text+"\n"});
   }
-
   let blob=new Blob([txt],{type:"text/plain"});
   let url=URL.createObjectURL(blob);
-
   let a=document.createElement("a");
   a.href=url;
   a.download="人生清单.txt";
   a.click();
-
-  URL.revokeObjectURL(url);
 }
 
 render();
-
 </script>
 
 </body>
