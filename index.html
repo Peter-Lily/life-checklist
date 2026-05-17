@@ -3,116 +3,123 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>人生宇宙仪表盘</title>
+<title>人生完成度 ·宇宙仪表盘</title>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
-  background: radial-gradient(circle at top,#0b0f1a,#05060a);
+  background: radial-gradient(circle at top,#070a12,#000);
   color:white;
-  padding:20px;
+  padding:18px;
 }
 
-/* 顶部核心区域 */
+/* 顶部 */
 .hero{
   text-align:center;
-  padding:30px 10px;
+  padding:20px 10px;
 }
 
 .big{
-  font-size:64px;
-  font-weight:700;
-  background: linear-gradient(90deg,#4facfe,#00f2fe);
+  font-size:66px;
+  font-weight:800;
+  background:linear-gradient(90deg,#00c6ff,#0072ff);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 
-.sub{
-  color:#aaa;
-  margin-top:8px;
-}
-
-/* 卡片 */
-.card{
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  backdrop-filter: blur(12px);
-  border-radius:18px;
-  padding:16px;
-  margin:12px 0;
-  transition:0.3s;
-}
-
-.card:hover{
-  transform: translateY(-2px);
-  border-color: rgba(255,255,255,0.2);
-}
-
-.cat-title{
-  font-size:18px;
-  font-weight:600;
-  margin-bottom:10px;
-  color:#7dd3fc;
-}
-
-/* item */
-.item{
-  padding:8px;
-  margin:6px 0;
-  border-radius:10px;
-  background:rgba(255,255,255,0.03);
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.item:hover{
-  background:rgba(255,255,255,0.08);
-}
-
-.item.done{
-  background:rgba(34,197,94,0.25);
-  color:#a7f3d0;
-  text-decoration:line-through;
-}
+.sub{color:#aaa;margin-top:6px}
 
 /* 仪表盘 */
 .grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:10px;
-  margin:20px 0;
+  margin:16px 0;
 }
 
 .box{
-  background:rgba(255,255,255,0.04);
-  border-radius:14px;
-  padding:12px;
-  text-align:center;
+  background:rgba(255,255,255,0.05);
   border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:10px;
+  text-align:center;
 }
 
-.box h3{
-  margin:0;
-  font-size:20px;
+.box h3{margin:0;font-size:18px}
+
+/* 分类卡片 */
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:14px;
+  margin:12px 0;
+  backdrop-filter: blur(10px);
 }
 
-.small{
-  color:#aaa;
-  font-size:12px;
+.title{
+  font-weight:600;
+  color:#7dd3fc;
+  margin-bottom:8px;
+}
+
+/* 进度条 */
+.bar-bg{
+  height:6px;
+  background:#222;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.bar{
+  height:6px;
+  background:linear-gradient(90deg,#22c55e,#3b82f6);
+}
+
+/* item */
+.item{
+  padding:6px 8px;
+  margin:4px 0;
+  border-radius:8px;
+  background:rgba(255,255,255,0.03);
+  cursor:pointer;
+  transition:0.2s;
+  font-size:14px;
+}
+
+.item.done{
+  background:rgba(34,197,94,0.25);
+  text-decoration:line-through;
+  color:#a7f3d0;
 }
 
 /* 按钮 */
+.btns{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:10px 0;
+}
+
 button{
-  background: linear-gradient(90deg,#4facfe,#00f2fe);
+  background:linear-gradient(90deg,#00c6ff,#0072ff);
   border:none;
-  padding:10px 14px;
+  padding:10px 12px;
   border-radius:10px;
+  color:white;
   cursor:pointer;
-  color:black;
   font-weight:600;
 }
 
+/* 海报 */
+.poster{
+  background:#000;
+  padding:20px;
+}
 </style>
 </head>
 
@@ -120,33 +127,29 @@ button{
 
 <div class="hero">
   <div class="big" id="percent">0%</div>
-  <div class="sub">人生完成度 · 可视化宇宙系统</div>
+  <div class="sub">人生完成度 · 分享卡片系统</div>
 </div>
 
 <div class="grid">
-  <div class="box">
-    <h3 id="done">0</h3>
-    <div class="small">已解锁经历</div>
-  </div>
-  <div class="box">
-    <h3 id="total">0</h3>
-    <div class="small">总经历</div>
-  </div>
-  <div class="box">
-    <h3 id="level">Lv.1</h3>
-    <div class="small">人生等级</div>
-  </div>
-  <div class="box">
-    <h3 id="cat">0</h3>
-    <div class="small">人生领域</div>
-  </div>
+  <div class="box"><h3 id="done">0</h3><div>已完成</div></div>
+  <div class="box"><h3 id="total">0</h3><div>总数</div></div>
+  <div class="box"><h3 id="level">Lv.1</h3><div>人生等级</div></div>
+  <div class="box"><h3 id="best">-</h3><div>最强领域</div></div>
 </div>
 
-<div id="app"></div>
+<div class="btns">
+  <button onclick="exportPNG()">导出海报PNG</button>
+  <button onclick="exportTXT()">导出文字报告</button>
+  <button onclick="copyShare()">复制分享文本</button>
+</div>
+
+<div id="poster">
+  <div id="app"></div>
+</div>
 
 <script>
 
-/* ===== 数据（你可以继续加） ===== */
+/* ===== 数据 ===== */
 const DATA = {
 "成长与童年": [
   "出生", "学会走路", "学会说话", "第一次叫爸爸妈妈", "第一次上幼儿园",
@@ -288,7 +291,7 @@ const DATA = {
 
 /* ===== 状态 ===== */
 function load(){
-  let raw = localStorage.getItem("life_cosmos");
+  let raw = localStorage.getItem("life_share");
   if(raw) return JSON.parse(raw);
 
   let obj={};
@@ -301,24 +304,41 @@ function load(){
 let state = load();
 
 function save(){
-  localStorage.setItem("life_cosmos",JSON.stringify(state));
+  localStorage.setItem("life_share",JSON.stringify(state));
 }
 
 /* ===== 统计 ===== */
 function calc(){
   let total=0,done=0;
+  let bestCat="-";
+  let bestScore=0;
 
   for(let k in state){
+    let cDone=0;
+
     state[k].forEach(i=>{
       total++;
-      if(i.done) done++;
+      if(i.done){
+        done++;
+        cDone++;
+      }
     });
+
+    if(cDone > bestScore){
+      bestScore=cDone;
+      bestCat=k;
+    }
   }
 
-  return {total,done,percent:Math.round(done/total*100)};
+  return {
+    total,
+    done,
+    percent:Math.round(done/total*100),
+    bestCat
+  };
 }
 
-/* ===== 等级系统 ===== */
+/* ===== 等级 ===== */
 function level(p){
   if(p<20) return "Lv.1";
   if(p<40) return "Lv.2";
@@ -329,17 +349,26 @@ function level(p){
 
 /* ===== 渲染 ===== */
 function render(){
-  let app=document.getElementById("app");
+  const app=document.getElementById("app");
   app.innerHTML="";
 
   for(let cat in state){
+
+    let doneCount=0;
+
+    state[cat].forEach(i=>{
+      if(i.done) doneCount++;
+    });
+
+    let percent = Math.round(doneCount/state[cat].length*100);
+
     let card=document.createElement("div");
     card.className="card";
 
-    let title=document.createElement("div");
-    title.className="cat-title";
-    title.innerText=cat;
-    card.appendChild(title);
+    card.innerHTML=`
+      <div class="title">${cat} · ${percent}%</div>
+      <div class="bar-bg"><div class="bar" style="width:${percent}%"></div></div>
+    `;
 
     state[cat].forEach(i=>{
       let div=document.createElement("div");
@@ -358,13 +387,59 @@ function render(){
     app.appendChild(card);
   }
 
-  let s = calc();
+  const s=calc();
 
-  document.getElementById("percent").innerText = s.percent + "%";
-  document.getElementById("done").innerText = s.done;
-  document.getElementById("total").innerText = s.total;
-  document.getElementById("level").innerText = level(s.percent);
-  document.getElementById("cat").innerText = Object.keys(state).length;
+  document.getElementById("percent").innerText=s.percent+"%";
+  document.getElementById("done").innerText=s.done;
+  document.getElementById("total").innerText=s.total;
+  document.getElementById("level").innerText=level(s.percent);
+  document.getElementById("best").innerText=s.bestCat;
+}
+
+/* ===== 导出 PNG ===== */
+function exportPNG(){
+  html2canvas(document.getElementById("poster"),{
+    backgroundColor:"#000",
+    scale:2
+  }).then(canvas=>{
+    let a=document.createElement("a");
+    a.download="人生完成卡片.png";
+    a.href=canvas.toDataURL("image/png");
+    a.click();
+  });
+}
+
+/* ===== 导出 TXT ===== */
+function exportTXT(){
+  let text="";
+
+  for(let cat in state){
+    text+=`\n【${cat}】\n`;
+    state[cat].forEach(i=>{
+      if(i.done) text+=`✓ ${i.text}\n`;
+    });
+  }
+
+  const blob=new Blob([text],{type:"text/plain"});
+  const url=URL.createObjectURL(blob);
+
+  let a=document.createElement("a");
+  a.href=url;
+  a.download="人生完成报告.txt";
+  a.click();
+}
+
+/* ===== 分享文本 ===== */
+function copyShare(){
+  const s=calc();
+  const text=
+`我的人生完成度：${s.percent}%
+已解锁：${s.done}/${s.total}
+人生等级：${level(s.percent)}
+最强领域：${s.bestCat}`;
+
+  navigator.clipboard.writeText(text);
+  alert("已复制分享内容");
 }
 
 render();
