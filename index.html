@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>人生已完成清单 Pro</title>
+<title>人生已完成清单 · Ultra</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI";
   background: radial-gradient(circle at top,#1a1a2e,#0f0f0f);
   color:white;
-  padding:28px;
+  padding:24px;
 }
 
-h1{font-size:34px;margin:0;}
-.sub{color:#aaa;margin-bottom:18px;}
+h1{margin:0;font-size:32px;}
+.sub{color:#aaa;margin-top:6px}
 
 .topbar{
   display:flex;
@@ -38,55 +38,36 @@ button{
 
 button:hover{background:#1d4ed8;}
 
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:20px 0;
+}
+
+.dash-card{
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:14px;
+  border-radius:14px;
+  text-align:center;
+}
+
+.value{font-size:22px;font-weight:bold;margin-top:6px;}
+
 .card{
   background:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.1);
   border-radius:16px;
-  padding:18px;
-  margin-top:18px;
-  backdrop-filter: blur(10px);
-}
-
-.progress{
-  height:10px;
-  background:#222;
-  border-radius:20px;
-  overflow:hidden;
-  margin:10px 0;
-}
-
-.bar{
-  height:10px;
-  width:0%;
-  background:linear-gradient(90deg,#22c55e,#3b82f6);
-  transition:0.3s;
-}
-
-.dashboard{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  margin-top:20px;
-}
-
-.dash-card{
-  background:rgba(255,255,255,0.05);
-  padding:12px;
-  border-radius:12px;
-  text-align:center;
-}
-
-.value{
-  font-size:22px;
-  font-weight:bold;
-  margin-top:6px;
+  padding:16px;
+  margin-bottom:14px;
 }
 
 .item{
   padding:8px;
   margin:5px 0;
-  border-radius:8px;
   background:rgba(255,255,255,0.05);
+  border-radius:8px;
   cursor:pointer;
 }
 
@@ -95,6 +76,7 @@ button:hover{background:#1d4ed8;}
   text-decoration:line-through;
   color:#b7f7c1;
 }
+
 </style>
 </head>
 
@@ -103,12 +85,12 @@ button:hover{background:#1d4ed8;}
 <div class="topbar">
   <div>
     <h1>人生已完成清单</h1>
-    <div class="sub">记录你已经经历的一切，而不是任务</div>
+    <div class="sub">记录你已经经历的，而不是任务</div>
   </div>
 
   <div>
     <button onclick="exportPoster()">导出海报</button>
-    <button onclick="exportText()">导出文字</button>
+    <button onclick="exportText()">导出文本</button>
   </div>
 </div>
 
@@ -116,38 +98,33 @@ button:hover{background:#1d4ed8;}
 <div class="dashboard">
   <div class="dash-card">
     <div>完成率</div>
-    <div class="value" id="percentText">0%</div>
+    <div class="value" id="percent">0%</div>
   </div>
 
   <div class="dash-card">
     <div>已完成</div>
-    <div class="value" id="doneText">0</div>
+    <div class="value" id="done">0</div>
   </div>
 
   <div class="dash-card">
     <div>等级</div>
-    <div class="value" id="levelText">Lv.1</div>
+    <div class="value" id="level">Lv.1</div>
   </div>
 
   <div class="dash-card">
-    <div>领域</div>
-    <div class="value" id="fieldText">0</div>
+    <div>分类</div>
+    <div class="value" id="cat">0</div>
   </div>
 </div>
 
-<!-- 进度条 -->
-<div class="card">
-  <div class="progress">
-    <div class="bar" id="bar"></div>
-  </div>
+<div id="poster">
+  <div id="app"></div>
+  <div id="summary"></div>
 </div>
-
-<div id="app"></div>
-<div id="summary"></div>
 
 <script>
 
-/* ========== 数据（节选，你可以继续扩展） ========== */
+/* ===== 数据（简化版示例，可继续扩展） ===== */
 const DATA = {
 "成长与童年": [
   "出生", "学会走路", "学会说话", "第一次叫爸爸妈妈", "第一次上幼儿园",
@@ -287,14 +264,14 @@ const DATA = {
 ]
 };
 
-/* ========== 状态 ========== */
+/* ===== 状态 ===== */
 function load(){
-  let raw = localStorage.getItem("life");
+  let raw = localStorage.getItem("life_ultra");
   if(raw) return JSON.parse(raw);
 
-  let obj={};
+  let obj = {};
   for(let k in DATA){
-    obj[k]=DATA[k].map(t=>({text:t,done:false}));
+    obj[k] = DATA[k].map(i=>({text:i,done:false}));
   }
   return obj;
 }
@@ -302,56 +279,54 @@ function load(){
 let state = load();
 
 function save(){
-  localStorage.setItem("life",JSON.stringify(state));
+  localStorage.setItem("life_ultra", JSON.stringify(state));
 }
 
-/* ========== 统计 ========== */
+/* ===== 计算 ===== */
 function calc(){
   let total=0,done=0;
-
   for(let k in state){
     state[k].forEach(i=>{
       total++;
       if(i.done) done++;
     });
   }
-
   return {
     total,
     done,
-    percent: total ? Math.round(done/total*100) : 0
+    percent: Math.round(done/total*100)
   };
 }
 
-/* ========== 等级 ========== */
+/* ===== 等级 ===== */
 function getLevel(p){
-  if(p < 20) return "Lv.1 萌芽";
-  if(p < 40) return "Lv.2 探索";
-  if(p < 60) return "Lv.3 成长";
-  if(p < 80) return "Lv.4 稳定";
-  return "Lv.5 人生玩家";
+  if(p<20) return "Lv.1";
+  if(p<40) return "Lv.2";
+  if(p<60) return "Lv.3";
+  if(p<80) return "Lv.4";
+  return "Lv.5";
 }
 
-/* ========== 渲染 ========== */
+/* ===== 渲染 ===== */
 function render(){
-  let app = document.getElementById("app");
-  app.innerHTML = "";
+  const app = document.getElementById("app");
+  app.innerHTML="";
 
   for(let cat in state){
-    let card = document.createElement("div");
-    card.className = "card";
+    const card = document.createElement("div");
+    card.className="card";
 
-    let title = document.createElement("h3");
+    const title = document.createElement("h3");
     title.innerText = cat;
     card.appendChild(title);
 
-    state[cat].forEach(item=>{
-      let div = document.createElement("div");
-      div.className = "item" + (item.done ? " done" : "");
-      div.innerText = item.text;
+    state[cat].forEach(i=>{
+      const div = document.createElement("div");
+      div.className = "item" + (i.done?" done":"");
+      div.innerText = i.text;
 
       div.onclick = ()=>{
-        item.done = !item.done;
+        i.done = !i.done;
         save();
         render();
       };
@@ -362,57 +337,49 @@ function render(){
     app.appendChild(card);
   }
 
-  let s = calc();
+  const s = calc();
 
-  document.getElementById("percentText").innerText = s.percent + "%";
-  document.getElementById("doneText").innerText = s.done;
-  document.getElementById("levelText").innerText = getLevel(s.percent);
-  document.getElementById("fieldText").innerText = Object.keys(state).length;
-
-  document.getElementById("bar").style.width = s.percent + "%";
+  document.getElementById("percent").innerText = s.percent + "%";
+  document.getElementById("done").innerText = s.done;
+  document.getElementById("level").innerText = getLevel(s.percent);
+  document.getElementById("cat").innerText = Object.keys(state).length;
 }
 
-/* ========== 导出文字 ========== */
+/* ===== 文本导出 ===== */
 function exportText(){
   let text = "";
 
   for(let cat in state){
     text += `\n【${cat}】\n`;
-
     state[cat].forEach(i=>{
-      if(i.done){
-        text += "✓ " + i.text + "\n";
-      }
+      if(i.done) text += `✓ ${i.text}\n`;
     });
   }
 
-  const blob = new Blob([text],{type:"text/plain"});
+  const blob = new Blob([text], {type:"text/plain"});
   const url = URL.createObjectURL(blob);
 
-  let a = document.createElement("a");
-  a.href = url;
-  a.download = "人生清单.txt";
+  const a = document.createElement("a");
+  a.href=url;
+  a.download="人生清单.txt";
   a.click();
-
-  URL.revokeObjectURL(url);
 }
 
-/* ========== 导出海报 ========== */
+/* ===== 海报导出 ===== */
 function exportPoster(){
-  const el = document.body;
+  const el = document.getElementById("poster");
 
-  html2canvas(el).then(canvas=>{
-    let a = document.createElement("a");
-    a.download = "人生海报.png";
-    a.href = canvas.toDataURL();
+  html2canvas(el, {backgroundColor:"#0f0f0f",scale:2})
+  .then(canvas=>{
+    const a=document.createElement("a");
+    a.download="人生海报.png";
+    a.href=canvas.toDataURL("image/png");
     a.click();
   });
 }
 
-/* ========== 启动 ========== */
 render();
 
 </script>
-
 </body>
 </html>
