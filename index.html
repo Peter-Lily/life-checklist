@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>人生完成度 ·宇宙仪表盘</title>
+<title>人生星图 · Cosmos</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
@@ -11,28 +11,31 @@
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
-  background: radial-gradient(circle at top,#070a12,#000);
+  background: radial-gradient(circle at top,#050816,#000);
   color:white;
-  padding:18px;
+  padding:16px;
 }
 
-/* 顶部 */
+/* ===== 顶部 ===== */
 .hero{
   text-align:center;
   padding:20px 10px;
 }
 
 .big{
-  font-size:66px;
+  font-size:70px;
   font-weight:800;
-  background:linear-gradient(90deg,#00c6ff,#0072ff);
+  background: linear-gradient(90deg,#00f5ff,#7c4dff);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
 
-.sub{color:#aaa;margin-top:6px}
+.tag{
+  color:#aaa;
+  margin-top:6px;
+}
 
-/* 仪表盘 */
+/* ===== 仪表盘 ===== */
 .grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -44,56 +47,59 @@ body{
   background:rgba(255,255,255,0.05);
   border:1px solid rgba(255,255,255,0.08);
   border-radius:14px;
-  padding:10px;
   text-align:center;
+  padding:10px;
 }
 
-.box h3{margin:0;font-size:18px}
+.box h3{margin:0}
 
-/* 分类卡片 */
-.card{
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:16px;
-  padding:14px;
+/* ===== 星图卡片 ===== */
+.constellation{
   margin:12px 0;
-  backdrop-filter: blur(10px);
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  position:relative;
+  overflow:hidden;
+}
+
+.constellation::before{
+  content:"";
+  position:absolute;
+  top:-40%;
+  left:-40%;
+  width:180%;
+  height:180%;
+  background: radial-gradient(circle,rgba(124,77,255,0.15),transparent 60%);
+  transform:rotate(25deg);
 }
 
 .title{
   font-weight:600;
   color:#7dd3fc;
-  margin-bottom:8px;
-}
-
-/* 进度条 */
-.bar-bg{
-  height:6px;
-  background:#222;
-  border-radius:10px;
-  overflow:hidden;
-}
-
-.bar{
-  height:6px;
-  background:linear-gradient(90deg,#22c55e,#3b82f6);
+  margin-bottom:6px;
 }
 
 /* item */
 .item{
-  padding:6px 8px;
+  font-size:14px;
+  padding:6px;
   margin:4px 0;
   border-radius:8px;
   background:rgba(255,255,255,0.03);
   cursor:pointer;
-  transition:0.2s;
-  font-size:14px;
 }
 
 .item.done{
-  background:rgba(34,197,94,0.25);
-  text-decoration:line-through;
   color:#a7f3d0;
+  background:rgba(34,197,94,0.2);
+  text-decoration:line-through;
+}
+
+/* 星星效果 */
+.glow{
+  box-shadow:0 0 10px rgba(0,245,255,0.4);
 }
 
 /* 按钮 */
@@ -106,19 +112,13 @@ body{
 }
 
 button{
-  background:linear-gradient(90deg,#00c6ff,#0072ff);
+  background:linear-gradient(90deg,#00f5ff,#7c4dff);
   border:none;
   padding:10px 12px;
   border-radius:10px;
-  color:white;
   cursor:pointer;
   font-weight:600;
-}
-
-/* 海报 */
-.poster{
-  background:#000;
-  padding:20px;
+  color:white;
 }
 </style>
 </head>
@@ -127,25 +127,22 @@ button{
 
 <div class="hero">
   <div class="big" id="percent">0%</div>
-  <div class="sub">人生完成度 · 分享卡片系统</div>
+  <div class="tag" id="status">人生加载中...</div>
 </div>
 
 <div class="grid">
-  <div class="box"><h3 id="done">0</h3><div>已完成</div></div>
-  <div class="box"><h3 id="total">0</h3><div>总数</div></div>
+  <div class="box"><h3 id="done">0</h3><div>已解锁</div></div>
+  <div class="box"><h3 id="total">0</h3><div>总经历</div></div>
   <div class="box"><h3 id="level">Lv.1</h3><div>人生等级</div></div>
-  <div class="box"><h3 id="best">-</h3><div>最强领域</div></div>
+  <div class="box"><h3 id="best">-</h3><div>最亮星云</div></div>
 </div>
 
 <div class="btns">
-  <button onclick="exportPNG()">导出海报PNG</button>
-  <button onclick="exportTXT()">导出文字报告</button>
-  <button onclick="copyShare()">复制分享文本</button>
+  <button onclick="exportPNG()">导出星图海报</button>
+  <button onclick="copyShare()">复制分享</button>
 </div>
 
-<div id="poster">
-  <div id="app"></div>
-</div>
+<div id="poster"></div>
 
 <script>
 
@@ -291,7 +288,7 @@ const DATA = {
 
 /* ===== 状态 ===== */
 function load(){
-  let raw = localStorage.getItem("life_share");
+  let raw = localStorage.getItem("life_cosmos_v2");
   if(raw) return JSON.parse(raw);
 
   let obj={};
@@ -304,29 +301,29 @@ function load(){
 let state = load();
 
 function save(){
-  localStorage.setItem("life_share",JSON.stringify(state));
+  localStorage.setItem("life_cosmos_v2",JSON.stringify(state));
 }
 
 /* ===== 统计 ===== */
 function calc(){
   let total=0,done=0;
-  let bestCat="-";
+  let best="-";
   let bestScore=0;
 
   for(let k in state){
-    let cDone=0;
+    let c=0;
 
     state[k].forEach(i=>{
       total++;
       if(i.done){
         done++;
-        cDone++;
+        c++;
       }
     });
 
-    if(cDone > bestScore){
-      bestScore=cDone;
-      bestCat=k;
+    if(c>bestScore){
+      bestScore=c;
+      best=k;
     }
   }
 
@@ -334,8 +331,17 @@ function calc(){
     total,
     done,
     percent:Math.round(done/total*100),
-    bestCat
+    best
   };
+}
+
+/* ===== 状态词 ===== */
+function status(p){
+  if(p<20) return "人生探索期 · 星云正在形成";
+  if(p<40) return "成长期 · 星光开始出现";
+  if(p<60) return "稳定期 · 星系逐渐成型";
+  if(p<80) return "加速期 · 光芒增强";
+  return "觉醒期 · 人生已点亮";
 }
 
 /* ===== 等级 ===== */
@@ -347,44 +353,40 @@ function level(p){
   return "Lv.5";
 }
 
-/* ===== 渲染 ===== */
+/* ===== 渲染星图 ===== */
 function render(){
-  const app=document.getElementById("app");
-  app.innerHTML="";
+  const box=document.getElementById("poster");
+  box.innerHTML="";
 
   for(let cat in state){
 
     let doneCount=0;
+    state[cat].forEach(i=>{ if(i.done) doneCount++; });
 
-    state[cat].forEach(i=>{
-      if(i.done) doneCount++;
-    });
+    let percent=Math.round(doneCount/state[cat].length*100);
 
-    let percent = Math.round(doneCount/state[cat].length*100);
+    let div=document.createElement("div");
+    div.className="constellation"+(percent>50?" glow":"");
 
-    let card=document.createElement("div");
-    card.className="card";
-
-    card.innerHTML=`
+    div.innerHTML=`
       <div class="title">${cat} · ${percent}%</div>
-      <div class="bar-bg"><div class="bar" style="width:${percent}%"></div></div>
     `;
 
     state[cat].forEach(i=>{
-      let div=document.createElement("div");
-      div.className="item"+(i.done?" done":"");
-      div.innerText=i.text;
+      let item=document.createElement("div");
+      item.className="item"+(i.done?" done":"");
+      item.innerText=i.text;
 
-      div.onclick=()=>{
+      item.onclick=()=>{
         i.done=!i.done;
         save();
         render();
       };
 
-      card.appendChild(div);
+      div.appendChild(item);
     });
 
-    app.appendChild(card);
+    box.appendChild(div);
   }
 
   const s=calc();
@@ -393,50 +395,34 @@ function render(){
   document.getElementById("done").innerText=s.done;
   document.getElementById("total").innerText=s.total;
   document.getElementById("level").innerText=level(s.percent);
-  document.getElementById("best").innerText=s.bestCat;
+  document.getElementById("best").innerText=s.best;
+  document.getElementById("status").innerText=status(s.percent);
 }
 
-/* ===== 导出 PNG ===== */
+/* ===== 导出PNG ===== */
 function exportPNG(){
   html2canvas(document.getElementById("poster"),{
     backgroundColor:"#000",
     scale:2
   }).then(canvas=>{
     let a=document.createElement("a");
-    a.download="人生完成卡片.png";
-    a.href=canvas.toDataURL("image/png");
+    a.download="人生星图.png";
+    a.href=canvas.toDataURL();
     a.click();
   });
-}
-
-/* ===== 导出 TXT ===== */
-function exportTXT(){
-  let text="";
-
-  for(let cat in state){
-    text+=`\n【${cat}】\n`;
-    state[cat].forEach(i=>{
-      if(i.done) text+=`✓ ${i.text}\n`;
-    });
-  }
-
-  const blob=new Blob([text],{type:"text/plain"});
-  const url=URL.createObjectURL(blob);
-
-  let a=document.createElement("a");
-  a.href=url;
-  a.download="人生完成报告.txt";
-  a.click();
 }
 
 /* ===== 分享文本 ===== */
 function copyShare(){
   const s=calc();
+
   const text=
-`我的人生完成度：${s.percent}%
-已解锁：${s.done}/${s.total}
-人生等级：${level(s.percent)}
-最强领域：${s.bestCat}`;
+`我现在的人生状态：
+${status(s.percent)}
+
+完成度：${s.percent}%
+等级：${level(s.percent)}
+最亮星云：${s.best}`;
 
   navigator.clipboard.writeText(text);
   alert("已复制分享内容");
@@ -445,6 +431,5 @@ function copyShare(){
 render();
 
 </script>
-
 </body>
 </html>
