@@ -3,96 +3,92 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>人生清单</title>
+<title>人生清单 V4</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
 <style>
-:root{
-  --bg:#0b0f1a;
-  --card:rgba(255,255,255,0.06);
-  --stroke:rgba(255,255,255,0.12);
-  --text:#e8ecf5;
-  --sub:#9aa4b2;
-  --green:#34d399;
-  --blue:#60a5fa;
-}
-
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI";
-  background: radial-gradient(circle at top,#111827,#05070d);
-  color:var(--text);
-  padding:24px;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display";
+  background:#0a0f1c;
+  color:#fff;
+  padding:20px;
 }
 
-h1{
-  font-size:34px;
-  margin:0;
-  letter-spacing:-0.02em;
-}
-
-.sub{color:var(--sub); margin-top:6px;}
-
-.topbar{
+/* ===== HERO ===== */
+.hero{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-bottom:18px;
+  padding:22px;
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(99,102,241,0.25),rgba(16,185,129,0.12));
+  border:1px solid rgba(255,255,255,0.08);
+  margin-bottom:16px;
 }
 
-button{
-  background:linear-gradient(135deg,#3b82f6,#2563eb);
-  border:none;
-  padding:10px 14px;
-  border-radius:12px;
-  color:white;
-  cursor:pointer;
-  font-weight:600;
+.hero h1{
+  font-size:26px;
+  margin:0;
 }
 
-button:hover{transform:scale(1.03);}
+.hero p{
+  margin:6px 0 0;
+  color:#94a3b8;
+}
 
-.dashboard{
+/* ===== RING ===== */
+.ring{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  background:conic-gradient(#22c55e var(--p), #1f2937 0);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+}
+
+/* ===== GRID ===== */
+.grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:12px;
-  margin-bottom:20px;
+  margin-bottom:16px;
 }
-
-.dash-card{
-  background:var(--card);
-  border:1px solid var(--stroke);
-  border-radius:16px;
-  padding:14px;
-  backdrop-filter: blur(14px);
-}
-
-.label{font-size:12px;color:var(--sub);}
-.value{font-size:22px;font-weight:700;margin-top:6px;}
 
 .card{
-  background:var(--card);
-  border:1px solid var(--stroke);
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
   border-radius:18px;
-  padding:16px;
-  margin-bottom:16px;
-  backdrop-filter: blur(14px);
+  padding:14px;
+}
+
+.label{font-size:12px;color:#94a3b8;}
+.value{font-size:18px;font-weight:700;margin-top:6px;}
+
+/* ===== CATEGORY ===== */
+.cat{
+  margin-bottom:14px;
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
 }
 
 .cat-title{
-  font-size:18px;
-  font-weight:700;
-  margin-bottom:10px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:600;
+  margin-bottom:8px;
 }
 
 .item{
-  padding:10px 12px;
+  padding:10px;
   margin:6px 0;
   border-radius:12px;
-  background:rgba(255,255,255,0.04);
+  background:rgba(255,255,255,0.03);
   cursor:pointer;
   transition:.2s;
 }
@@ -100,64 +96,81 @@ button:hover{transform:scale(1.03);}
 .item:hover{transform:scale(1.02);}
 
 .item.done{
-  background:rgba(52,211,153,0.15);
-  color:#a7f3d0;
+  background:rgba(34,197,94,0.15);
+  color:#86efac;
   text-decoration:line-through;
 }
 
-.progress{
-  height:8px;
-  background:#1f2937;
+/* ===== BAR ===== */
+.bar{
+  height:6px;
+  background:#111827;
   border-radius:20px;
   overflow:hidden;
-  margin-top:10px;
+  margin-top:8px;
+}
+.bar > div{
+  height:100%;
+  background:linear-gradient(90deg,#22c55e,#3b82f6);
 }
 
-.bar{
-  height:8px;
-  width:0%;
-  background:linear-gradient(90deg,var(--green),var(--blue));
+/* ===== BUTTONS ===== */
+.btns{
+  display:flex;
+  gap:10px;
+  margin:16px 0;
 }
 
-.shareBox{
-  margin-top:20px;
-  padding:16px;
-  border-radius:16px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--stroke);
+button{
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#3b82f6,#2563eb);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
+<div class="hero">
   <div>
-    <h1>人生已完成清单</h1>
-    <div class="sub">不是任务，是你已经活过的证明</div>
+    <h1>人生清单</h1>
+    <p>你已经活过的证明</p>
   </div>
 
-  <div>
-    <button onclick="exportShare()">分享卡片</button>
-    <button onclick="exportText()">导出文本</button>
+  <div class="ring" id="ring">0%</div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="label">已完成</div>
+    <div class="value" id="done">0</div>
+  </div>
+
+  <div class="card">
+    <div class="label">等级</div>
+    <div class="value" id="lv">Lv.1</div>
+  </div>
+
+  <div class="card">
+    <div class="label">领域</div>
+    <div class="value" id="cat">0</div>
   </div>
 </div>
 
-<!-- 仪表盘 -->
-<div class="dashboard">
-  <div class="dash-card"><div class="label">完成率</div><div class="value" id="p">0%</div></div>
-  <div class="dash-card"><div class="label">已点亮</div><div class="value" id="d">0</div></div>
-  <div class="dash-card"><div class="label">人生等级</div><div class="value" id="lv">Lv.1</div></div>
-  <div class="dash-card"><div class="label">领域</div><div class="value" id="c">0</div></div>
+<div class="btns">
+  <button onclick="copyShare()">复制分享</button>
+  <button onclick="exportText()">导出</button>
 </div>
-
-<div class="progress"><div class="bar" id="bar"></div></div>
 
 <div id="app"></div>
 
-<div id="shareCard" class="shareBox"></div>
-
 <script>
+
 const DATA = {
 "成长与童年": [
   "出生", "学会走路", "学会说话", "第一次叫爸爸妈妈", "第一次上幼儿园",
@@ -300,18 +313,18 @@ const DATA = {
 let state = load();
 
 function load(){
-  let s = localStorage.getItem("life_v2");
+  let s = localStorage.getItem("life_v4");
   if(s) return JSON.parse(s);
 
-  let obj = {};
+  let obj={};
   for(let k in DATA){
-    obj[k] = DATA[k].map(x=>({text:x,done:false}));
+    obj[k]=DATA[k].map(x=>({text:x,done:false}));
   }
   return obj;
 }
 
 function save(){
-  localStorage.setItem("life_v2",JSON.stringify(state));
+  localStorage.setItem("life_v4",JSON.stringify(state));
 }
 
 function calc(){
@@ -326,96 +339,81 @@ function calc(){
 }
 
 function level(p){
-  if(p<20) return "Lv.1";
-  if(p<40) return "Lv.2";
-  if(p<60) return "Lv.3";
-  if(p<80) return "Lv.4";
-  return "Lv.5";
+  return p<20?"Lv.1":p<40?"Lv.2":p<60?"Lv.3":p<80?"Lv.4":"Lv.5";
 }
 
 function render(){
-  const app = document.getElementById("app");
+  const app=document.getElementById("app");
   app.innerHTML="";
 
-  for(let cat in state){
-    const card=document.createElement("div");
-    card.className="card";
-
-    const title=document.createElement("div");
-    title.className="cat-title";
-    title.textContent=cat;
-    card.appendChild(title);
-
-    state[cat].forEach(i=>{
-      const div=document.createElement("div");
-      div.className="item"+(i.done?" done":"");
-      div.textContent=i.text;
-
-      div.onclick=()=>{
-        i.done=!i.done;
-        save();
-        render();
-      };
-
-      card.appendChild(div);
-    });
-
-    app.appendChild(card);
-  }
-
   const s=calc();
-  document.getElementById("p").textContent=s.p+"%";
-  document.getElementById("d").textContent=s.d;
-  document.getElementById("lv").textContent=level(s.p);
-  document.getElementById("c").textContent=Object.keys(state).length;
 
-  document.getElementById("bar").style.width=s.p+"%";
-
-  renderShare();
-}
-
-function renderShare(){
-  const s=calc();
-  let html=`<h3>你的完成人生</h3>
-  <p><b>${s.p}%</b> 已点亮</p>`;
+  document.getElementById("ring").style.setProperty("--p", s.p+"%");
+  document.getElementById("ring").innerText=s.p+"%";
+  document.getElementById("done").innerText=s.d;
+  document.getElementById("lv").innerText=level(s.p);
+  document.getElementById("cat").innerText=Object.keys(state).length;
 
   for(let cat in state){
     let done = state[cat].filter(i=>i.done).length;
-    html+=`<div>${cat}: ${done}/${state[cat].length}</div>`;
+    let total = state[cat].length;
+    let p = Math.round(done/total*100);
+
+    let div=document.createElement("div");
+    div.className="cat";
+
+    div.innerHTML=`
+      <div class="cat-title">
+        <span>${cat}</span>
+        <span>${p}%</span>
+      </div>
+
+      ${state[cat].map(i=>`
+        <div class="item ${i.done?'done':''}" onclick="toggle('${cat}','${i.text}')">
+          ${i.text}
+        </div>
+      `).join('')}
+
+      <div class="bar"><div style="width:${p}%"></div></div>
+    `;
+
+    app.appendChild(div);
+  }
+}
+
+function toggle(cat,text){
+  let item = state[cat].find(i=>i.text===text);
+  item.done=!item.done;
+  save();
+  render();
+}
+
+function copyShare(){
+  const s=calc();
+  let txt=`人生完成度 ${s.p}%\n\n`;
+
+  for(let c in state){
+    let d=state[c].filter(i=>i.done).length;
+    txt+=`${c}: ${d}/${state[c].length}\n`;
   }
 
-  document.getElementById("shareCard").innerHTML=html;
+  navigator.clipboard.writeText(txt);
+  alert("已复制");
 }
 
-/* 分享（不卡长图） */
-function exportShare(){
-  const el = document.getElementById("shareCard");
-
-  html2canvas(el,{
-    backgroundColor:"#0b0f1a",
-    scale:2
-  }).then(canvas=>{
-    const a=document.createElement("a");
-    a.download="人生分享卡.png";
-    a.href=canvas.toDataURL();
-    a.click();
-  });
-}
-
-/* 文本分享（更重要） */
 function exportText(){
   let txt="";
-  for(let cat in state){
-    txt+="\n["+cat+"]\n";
-    state[cat].forEach(i=>{
+  for(let c in state){
+    txt+="\n["+c+"]\n";
+    state[c].forEach(i=>{
       if(i.done) txt+="✓ "+i.text+"\n";
     });
   }
 
-  const blob=new Blob([txt],{type:"text/plain"});
-  const url=URL.createObjectURL(blob);
+  let blob=new Blob([txt],{type:"text/plain"});
+  let url=URL.createObjectURL(blob);
 
-  const a=document.createElement("a");
+  let a=document.createElement("a");
   a.href=url;
   a.download="人生清单.txt";
   a.click();
@@ -424,6 +422,7 @@ function exportText(){
 }
 
 render();
+
 </script>
 
 </body>
